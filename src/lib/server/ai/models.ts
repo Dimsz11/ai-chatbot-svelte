@@ -1,22 +1,23 @@
-import { createXai } from '@ai-sdk/xai';
-import { createGroq } from '@ai-sdk/groq';
-import { customProvider, extractReasoningMiddleware, wrapLanguageModel } from 'ai';
-import { XAI_API_KEY, GROQ_API_KEY } from '$env/static/private';
+import { customProvider } from 'ai';
+import { createSynoxCloudModel } from './synoxcloud-provider';
 
-const xai = createXai({ apiKey: XAI_API_KEY });
-const groq = createGroq({ apiKey: GROQ_API_KEY });
+// NOTE: synoxcloud.xyz is a third-party HTTP API, not an official
+// Anthropic/Claude API — the "claude-opus-*" names are just the model
+// path segments this particular provider uses, not verified Anthropic models.
+const claudeOpus45 = createSynoxCloudModel({ modelId: 'claude-opus-4.5' });
+const claudeOpus46 = createSynoxCloudModel({ modelId: 'claude-opus-4.6' });
+const claudeOpus47 = createSynoxCloudModel({ modelId: 'claude-opus-4.7' });
+const claudeOpus48 = createSynoxCloudModel({ modelId: 'claude-opus-4.8' });
+const claudeSonnet46 = createSynoxCloudModel({ modelId: 'claude-sonnet-4.6' });
 
 export const myProvider = customProvider({
 	languageModels: {
-		'chat-model': xai('grok-2-1212'),
-		'chat-model-reasoning': wrapLanguageModel({
-			model: groq('deepseek-r1-distill-llama-70b'),
-			middleware: extractReasoningMiddleware({ tagName: 'think' })
-		}),
-		'title-model': xai('grok-2-1212'),
-		'artifact-model': xai('grok-2-1212')
-	},
-	imageModels: {
-		'small-model': xai.image('grok-2-image')
+		'claude-opus-4.5': claudeOpus45,
+		'claude-opus-4.6': claudeOpus46,
+		'claude-opus-4.7': claudeOpus47,
+		'claude-opus-4.8': claudeOpus48,
+		'claude-sonnet-4.6': claudeSonnet46,
+		'title-model': claudeSonnet46,
+		'artifact-model': claudeSonnet46
 	}
 });
